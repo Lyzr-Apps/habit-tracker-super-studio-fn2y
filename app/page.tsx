@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { callAIAgent } from '@/lib/aiAgent'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -15,7 +15,6 @@ import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
-import { Switch } from '@/components/ui/switch'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import { FiPlus, FiEdit2, FiTrash2, FiCheck, FiX, FiCalendar, FiBarChart2, FiList, FiHome, FiSearch, FiChevronLeft, FiChevronRight, FiTrendingUp, FiTrendingDown, FiTarget, FiAward, FiActivity, FiZap, FiStar, FiClock, FiMenu } from 'react-icons/fi'
@@ -84,29 +83,6 @@ interface InsightsData {
   strengths: string[]
   improvements: string[]
   category_insights: Record<string, string>
-}
-
-// ─── Sample Data ───
-function generateSampleData(): { habits: Habit[]; completions: CompletionRecord[] } {
-  const sampleHabits: Habit[] = [
-    { id: 's1', name: 'Morning Run', category: 'Fitness', frequency: 'daily', reminderTime: '06:30', createdAt: subDays(new Date(), 30).toISOString(), color: CATEGORY_COLORS.Fitness },
-    { id: 's2', name: 'Read 30 Minutes', category: 'Study', frequency: 'daily', reminderTime: '21:00', createdAt: subDays(new Date(), 25).toISOString(), color: CATEGORY_COLORS.Study },
-    { id: 's3', name: 'Meditate', category: 'Health', frequency: 'daily', reminderTime: '07:00', createdAt: subDays(new Date(), 20).toISOString(), color: CATEGORY_COLORS.Health },
-    { id: 's4', name: 'Drink 8 Glasses Water', category: 'Health', frequency: 'daily', reminderTime: '08:00', createdAt: subDays(new Date(), 18).toISOString(), color: CATEGORY_COLORS.Health },
-    { id: 's5', name: 'Review Work Goals', category: 'Work', frequency: 'weekly', reminderTime: '09:00', createdAt: subDays(new Date(), 15).toISOString(), color: CATEGORY_COLORS.Work },
-  ]
-
-  const completions: CompletionRecord[] = []
-  for (let d = 0; d < 30; d++) {
-    const dateStr = format(subDays(new Date(), d), 'yyyy-MM-dd')
-    sampleHabits.forEach((h) => {
-      const shouldComplete = Math.random() > (d < 7 ? 0.2 : 0.4)
-      if (shouldComplete) {
-        completions.push({ habitId: h.id, date: dateStr, completed: true })
-      }
-    })
-  }
-  return { habits: sampleHabits, completions }
 }
 
 // ─── Helper Functions ───
@@ -269,7 +245,6 @@ export default function Page() {
   // Navigation state
   const [activeTab, setActiveTab] = useState<TabKey>('dashboard')
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [sampleDataEnabled, setSampleDataEnabled] = useState(false)
 
   // Data state
   const [habits, setHabits] = useState<Habit[]>([])
@@ -320,30 +295,9 @@ export default function Page() {
   // ─── Persist data ───
   useEffect(() => {
     if (!hydrated) return
-    if (!sampleDataEnabled) {
-      localStorage.setItem(LS_HABITS, JSON.stringify(habits))
-      localStorage.setItem(LS_COMPLETIONS, JSON.stringify(completions))
-    }
-  }, [habits, completions, hydrated, sampleDataEnabled])
-
-  // ─── Sample data toggle ───
-  const sampleDataRef = useRef<{ habits: Habit[]; completions: CompletionRecord[] } | null>(null)
-  const realDataRef = useRef<{ habits: Habit[]; completions: CompletionRecord[] }>({ habits: [], completions: [] })
-
-  const handleSampleToggle = useCallback((checked: boolean) => {
-    if (checked) {
-      realDataRef.current = { habits, completions }
-      if (!sampleDataRef.current) {
-        sampleDataRef.current = generateSampleData()
-      }
-      setHabits(sampleDataRef.current.habits)
-      setCompletions(sampleDataRef.current.completions)
-    } else {
-      setHabits(realDataRef.current.habits)
-      setCompletions(realDataRef.current.completions)
-    }
-    setSampleDataEnabled(checked)
-  }, [habits, completions])
+    localStorage.setItem(LS_HABITS, JSON.stringify(habits))
+    localStorage.setItem(LS_COMPLETIONS, JSON.stringify(completions))
+  }, [habits, completions, hydrated])
 
   // ─── Today's data ───
   const todayStr = useMemo(() => {
@@ -672,19 +626,13 @@ Please provide consistency_score (0-100), score_label, trend_analysis (2-3 obser
         <main className="flex-1 md:ml-60">
           {/* Header */}
           <header className="sticky top-0 z-20 bg-background/80 backdrop-blur-lg border-b border-border px-4 md:px-6 py-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <button className="md:hidden p-2 rounded-xl hover:bg-secondary" onClick={() => setSidebarOpen(true)}>
-                  <FiMenu className="w-5 h-5" />
-                </button>
-                <div>
-                  <h2 className="text-lg font-bold capitalize">{activeTab}</h2>
-                  <p className="text-xs text-muted-foreground">{currentDate}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <Label htmlFor="sample-toggle" className="text-xs text-muted-foreground cursor-pointer">Sample Data</Label>
-                <Switch id="sample-toggle" checked={sampleDataEnabled} onCheckedChange={handleSampleToggle} />
+            <div className="flex items-center gap-3">
+              <button className="md:hidden p-2 rounded-xl hover:bg-secondary" onClick={() => setSidebarOpen(true)}>
+                <FiMenu className="w-5 h-5" />
+              </button>
+              <div>
+                <h2 className="text-lg font-bold capitalize">{activeTab}</h2>
+                <p className="text-xs text-muted-foreground">{currentDate}</p>
               </div>
             </div>
           </header>
