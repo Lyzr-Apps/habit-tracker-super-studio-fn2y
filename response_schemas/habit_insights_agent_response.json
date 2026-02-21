@@ -1,0 +1,36 @@
+{
+  "agent_name": "Habit Insights Agent",
+  "agent_id": "6999606272a2e3b0eaab971b",
+  "description": "Analyzes user's habit completion data (streaks, frequencies, category breakdown, weekly/monthly trends) and generates a habit consistency score, performance insights, pattern observations, and actionable improvement recommendations",
+  "agent_type": "json",
+  "accessor": "result",
+  "auto_generated": true,
+  "response_schema": {
+    "consistency_score": "number",
+    "score_label": "string",
+    "trend_analysis": [
+      "string"
+    ],
+    "strengths": [
+      "string"
+    ],
+    "improvements": [
+      "string"
+    ],
+    "category_insights": {}
+  },
+  "example_response": {
+    "consistency_score": 0,
+    "score_label": "Label for the score like Excellent, Good, Needs Improvement",
+    "trend_analysis": [
+      "sample string"
+    ],
+    "strengths": [
+      "sample string"
+    ],
+    "improvements": [
+      "sample string"
+    ],
+    "category_insights": {}
+  }
+}

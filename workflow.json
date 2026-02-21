@@ -1,0 +1,18 @@
+{
+  "nodes": [
+    {"id": "input_node", "type": "Input", "label": "User Habit Data", "nodeCategory": "input"},
+    {"id": "habit_insights_agent", "type": "Agent", "label": "Habit Insights Agent", "nodeCategory": "agent"},
+    {"id": "output_node", "type": "Output", "label": "Insights Response", "nodeCategory": "end"}
+  ],
+  "edges": [
+    {"source": "input_node", "target": "habit_insights_agent"},
+    {"source": "habit_insights_agent", "target": "output_node"}
+  ],
+  "agents": {
+    "habit_insights_agent": {
+      "id": "6999606272a2e3b0eaab971b",
+      "name": "Habit Insights Agent",
+      "type": "single"
+    }
+  }
+}

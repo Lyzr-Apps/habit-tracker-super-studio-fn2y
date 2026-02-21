@@ -1,0 +1,10 @@
+{
+  "agents": {
+    "habit_insights_agent": {
+      "agent_id": "6999606272a2e3b0eaab971b",
+      "name": "Habit Insights Agent",
+      "provider": "openai",
+      "model": "gpt-4.1"
+    }
+  }
+}

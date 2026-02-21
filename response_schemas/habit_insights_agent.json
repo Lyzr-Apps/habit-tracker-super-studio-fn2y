@@ -1,0 +1,15 @@
+{
+  "agent_name": "Habit Insights Agent",
+  "agent_id": "6999606272a2e3b0eaab971b",
+  "agent_type": "json",
+  "accessor": "json",
+  "has_module_outputs": false,
+  "schema": {
+    "consistency_score": "number",
+    "score_label": "string",
+    "trend_analysis": "string[]",
+    "strengths": "string[]",
+    "improvements": "string[]",
+    "category_insights": "Record<string, string>"
+  }
+}
